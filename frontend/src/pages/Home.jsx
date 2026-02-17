@@ -1,6 +1,6 @@
 import React from "react";
-import ProductCard from "../components/ProductCard.jsx";
-import products from "../data/products"; // ✅ Import central products file
+import ProductCard from "../components/ProductCard";
+import products from "../data/products";
 
 export default function Home() {
   return (

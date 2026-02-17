@@ -7,18 +7,13 @@ export default function Product() {
   const { id } = useParams();
 
   const product = products.find(
-    (p) => p.id === Number(id)
+    p => p.id === Number(id)
   );
 
   if (!product) {
-    return (
-      <h2 style={{ textAlign: "center", marginTop: "50px" }}>
-        Product Not Found
-      </h2>
-    );
+    return <h2 style={{ textAlign: "center" }}>Product Not Found</h2>;
   }
 
-  // Add to cart
   const addToCart = () => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     cart.push(product);
@@ -29,31 +24,20 @@ export default function Product() {
   return (
     <div className="container product-page">
 
-      {/* Image */}
-      <img
-        src={product.image}
-        alt={product.name}
-        className="product-image"
-      />
+      <img src={product.image} alt={product.name} />
 
-      {/* Info */}
       <div className="product-info">
-
         <h1>{product.name}</h1>
 
-        <p className="price">
-          ${product.price} / day
-        </p>
+        <p className="price">${product.price}</p>
 
-        <p className="description">
-          {product.description}
-        </p>
+        <p>{product.description}</p>
 
         <button onClick={addToCart}>
-          Add to Cart
+          Add To Cart
         </button>
-
       </div>
+
     </div>
   );
 }
