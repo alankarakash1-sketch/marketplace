@@ -29,7 +29,7 @@ export default function Product() {
       <div className="product-info">
         <h1>{product.name}</h1>
 
-        <p className="price">${product.price}</p>
+        <p className="price">₹{product.price}</p>
 
         <p>{product.description}</p>
 

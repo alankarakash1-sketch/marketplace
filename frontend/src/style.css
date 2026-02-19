@@ -411,3 +411,41 @@ button {
 button:hover {
   opacity: 0.8;
 }
+/* Cart */
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background: white;
+}
+
+.cart-item input {
+  width: 60px;
+  margin-left: 5px;
+  padding: 4px;
+}
+
+.item-total {
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.remove-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.grand-total {
+  text-align: right;
+  margin-top: 20px;
+  color: green;
+}

@@ -42,7 +42,7 @@ export default function Product() {
         <h1>{product.name}</h1>
 
         <p className="price">
-          ${product.price} / day
+          ₹{product.price} / day
         </p>
 
         <p className="description">

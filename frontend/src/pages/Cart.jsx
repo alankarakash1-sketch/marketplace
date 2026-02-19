@@ -1,41 +1,140 @@
 import React, { useEffect, useState } from "react";
 
 export default function Cart() {
+
   const [cart, setCart] = useState([]);
-  const [total, setTotal] = useState(0);
 
-  // Load cart from localStorage
+  // Load cart
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(storedCart);
 
-    // Calculate total
-    const sum = storedCart.reduce((acc, item) => acc + item.price, 0);
-    setTotal(sum);
+    const storedCart =
+      JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Add days if missing
+    const updatedCart = storedCart.map(item => ({
+      ...item,
+      days: item.days || 1
+    }));
+
+    setCart(updatedCart);
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(updatedCart)
+    );
+
   }, []);
 
-  const removeFromCart = (id) => {
-    const updatedCart = cart.filter(item => item.id !== id);
+  // Update days
+  const updateDays = (id, days) => {
+
+    const updatedCart = cart.map(item =>
+      item.id === id
+        ? { ...item, days: Number(days) }
+        : item
+    );
+
     setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    setTotal(updatedCart.reduce((acc, item) => acc + item.price, 0));
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(updatedCart)
+    );
   };
 
-  if (cart.length === 0) return <p style={{ textAlign: "center", marginTop: "50px" }}>Your cart is empty</p>;
+  // Remove
+  const removeFromCart = (id) => {
+
+    const updatedCart =
+      cart.filter(item => item.id !== id);
+
+    setCart(updatedCart);
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(updatedCart)
+    );
+  };
+
+  // Total price
+  const getTotal = () => {
+
+    return cart.reduce(
+      (sum, item) =>
+        sum + item.price * item.days,
+      0
+    );
+  };
+
+  if (cart.length === 0) {
+    return (
+      <p style={{ textAlign: "center", marginTop: "50px" }}>
+        Your cart is empty
+      </p>
+    );
+  }
 
   return (
     <div className="container" style={{ marginTop: "30px" }}>
+
       <h1>Your Cart</h1>
+
       {cart.map(item => (
-        <div key={item.id} className="product-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+
+        <div
+          key={item.id}
+          className="cart-item"
+        >
+
+          {/* Left */}
           <div>
+
             <h3>{item.name}</h3>
-            <p>${item.price}</p>
+
+            <p>₹{item.price} / day</p>
+
+            {/* Days */}
+            <label>
+              Days:
+              <input
+                type="number"
+                min="1"
+                value={item.days}
+                onChange={(e) =>
+                  updateDays(
+                    item.id,
+                    e.target.value
+                  )
+                }
+              />
+            </label>
+
+            {/* Item Total */}
+            <p className="item-total">
+              Item Total: ₹
+              {item.price * item.days}
+            </p>
+
           </div>
-          <button onClick={() => removeFromCart(item.id)} style={{ backgroundColor: "#ff4d4f", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "5px", cursor: "pointer" }}>Remove</button>
+
+          {/* Remove */}
+          <button
+            onClick={() =>
+              removeFromCart(item.id)
+            }
+            className="remove-btn"
+          >
+            Remove
+          </button>
+
         </div>
       ))}
-      <h2>Total: ${total}</h2>
+
+      {/* Grand Total */}
+      <h2 className="grand-total">
+        Total: ₹{getTotal()}
+      </h2>
+
     </div>
   );
 }

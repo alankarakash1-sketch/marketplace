@@ -29,7 +29,7 @@ export default function ProductCard({ product }) {
 
       </Link>
 
-      <p>${product.price} / day</p>
+      <p>₹{product.price} / day</p>
 
       <button onClick={addToCart}>
         Add to Cart
