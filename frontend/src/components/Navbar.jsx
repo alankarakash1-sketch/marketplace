@@ -102,6 +102,9 @@ export default function Navbar() {
           <Link to="/register" style={{ color: "#4dabf7" }}>
             Register
           </Link>
+          <Link to="/policy" style={{ color: "#fff", marginRight: "15px" }}>
+  Policy
+</Link>
         </div>
       )}
     </nav>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 export default function Cart() {
 
   const [cart, setCart] = useState([]);
@@ -134,7 +134,11 @@ export default function Cart() {
       <h2 className="grand-total">
         Total: ₹{getTotal()}
       </h2>
-
+      <Link to="/payment">
+  <button className="checkout-btn">
+    Proceed to Payment
+  </button>
+</Link>
     </div>
   );
 }

@@ -1,12 +1,13 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
-
+import Policy from "./pages/Policy";
 import Home from "./pages/Home.jsx";
 import Product from "./pages/Product.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx"; // ✅ NEW
 import Cart from "./pages/Cart.jsx";
+import Payment from "./pages/Payment";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} /> {/* ✅ NEW */}
+        <Route path="/policy" element={<Policy />} />
+        <Route path="/payment" element={<Payment />} />
       </Routes>
     </div>
   );

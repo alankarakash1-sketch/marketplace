@@ -449,3 +449,80 @@ button:hover {
   margin-top: 20px;
   color: green;
 }
+/* Policy Page */
+
+.policy-page {
+  max-width: 800px;
+  margin: 40px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.policy-page h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.policy-page section {
+  margin-bottom: 20px;
+}
+
+.policy-page h3 {
+  color: #222;
+  margin-bottom: 5px;
+}
+
+.policy-page p {
+  color: #555;
+  line-height: 1.6;
+}
+/* Payment Page */
+
+.payment-page {
+  max-width: 450px;
+  margin: 40px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.payment-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.payment-page input {
+  padding: 8px;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.payment-row {
+  display: flex;
+  gap: 15px;
+}
+
+.payment-row label {
+  flex: 1;
+}
+
+.checkout-btn {
+  margin-top: 15px;
+  background: green;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.checkout-btn:hover {
+  opacity: 0.9;
+}
+
+.payment-success {
+  text-align: center;
+  margin-top: 60px;
+}
