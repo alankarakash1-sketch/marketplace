@@ -526,3 +526,18 @@ button:hover {
   text-align: center;
   margin-top: 60px;
 }
+.payment-box {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-size: 15px;
+}
+.payment-box input {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
