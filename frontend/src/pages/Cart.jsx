@@ -6,63 +6,95 @@ export default function Cart() {
   const [cart, setCart] = useState([]);
   const [days, setDays] = useState(1);
 
-  const [paymentMethod, setPaymentMethod] = useState("UPI");
+  const [method, setMethod] = useState("UPI");
 
-  // Forms
-  const [upiId, setUpiId] = useState("");
+  const [card, setCard] = useState({
+    number: "",
+    expiry: "",
+    cvv: ""
+  });
 
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
+  const [upi, setUpi] = useState("");
 
-  // Status
-  const [paymentFailed, setPaymentFailed] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
 
   const navigate = useNavigate();
 
 
-  // Load cart
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(storedCart);
-  }, []);
+  // Razorpay (Demo)
+  const handleRazorpay = () => {
 
+    const token = localStorage.getItem("token");
 
-  // Total
-  const getTotal = () => {
-    return cart.reduce(
-      (sum, item) => sum + item.price * days,
-      0
-    );
+    if (!token) {
+      alert("Please login to continue");
+      navigate("/login");
+      return;
+    }
+
+    alert("Connecting to Razorpay...");
+
+    setTimeout(() => {
+
+      alert("❌ Payment Failed\nAny amount debited will be refunded");
+
+      navigate("/");
+
+    }, 2000);
   };
 
 
+  // Check Login
+  useEffect(() => {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please login first");
+      navigate("/login");
+    }
+
+    const stored = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(stored);
+
+  }, [navigate]);
+
+
+  // Total
+  const total = cart.reduce(
+    (sum, item) => sum + item.price * days,
+    0
+  );
+
+
   // Remove
-  const removeItem = (id) => {
-    const updated = cart.filter(item => item.id !== id);
+  const remove = (id) => {
+
+    const updated = cart.filter(i => i.id !== id);
+
     setCart(updated);
+
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
 
-  // Validate before fake pay
+  // Validation
   const validatePayment = () => {
 
-    if (paymentMethod === "UPI") {
-      if (!upiId.includes("@")) {
-        alert("Enter valid UPI ID");
+    if (method === "Card") {
+
+      if (
+        card.number.length !== 16 ||
+        card.cvv.length !== 3 ||
+        !card.expiry
+      ) {
         return false;
       }
     }
 
-    if (paymentMethod === "Card") {
-      if (
-        cardNumber.length !== 16 ||
-        expiry.length !== 5 ||
-        cvv.length !== 3
-      ) {
-        alert("Enter valid card details");
+    if (method === "UPI") {
+
+      if (!upi.includes("@")) {
         return false;
       }
     }
@@ -71,47 +103,60 @@ export default function Cart() {
   };
 
 
-  // Fake payment
-  const confirmPayment = () => {
+  // Pay (UPI / Card)
+  const pay = () => {
 
-    if (!validatePayment()) return;
+    if (method === "Razorpay") {
+      handleRazorpay();
+      return;
+    }
 
-    setLoading(true);
+    if (!validatePayment()) {
+      setStatus("fail");
+      return;
+    }
 
-    // Fake processing
     setTimeout(() => {
 
-      setLoading(false);
-      setPaymentFailed(true);
+      setStatus("success");
 
       localStorage.removeItem("cart");
-      setCart([]);
 
-    }, 2000);
+    }, 1500);
   };
 
 
-  // Home
-  const goHome = () => {
-    navigate("/");
-  };
-
-
-  // FAILED SCREEN
-  if (paymentFailed) {
+  // Success Page
+  if (status === "success") {
     return (
-      <div className="container" style={{ textAlign: "center", marginTop: "80px" }}>
+      <div className="container" style={{ textAlign: "center" }}>
+
+        <h1 style={{ color: "green" }}>✅ Payment Successful</h1>
+
+        <p>Thank you for your order!</p>
+
+        <button onClick={() => navigate("/")}>
+          Go Home
+        </button>
+
+      </div>
+    );
+  }
+
+
+  // Fail Page
+  if (status === "fail") {
+    return (
+      <div className="container" style={{ textAlign: "center" }}>
 
         <h1 style={{ color: "red" }}>❌ Payment Failed</h1>
 
-        <p style={{ fontSize: "18px" }}>
-          Your payment via <b>{paymentMethod}</b> was unsuccessful.
-        </p>
+        <p>Invalid {method} Details</p>
 
-        <p>Amount (₹{getTotal()}) will be refunded.</p>
+        <p>Try Again</p>
 
-        <button className="checkout-btn" onClick={goHome}>
-          Go to Home
+        <button onClick={() => setStatus("")}>
+          Retry
         </button>
 
       </div>
@@ -120,34 +165,30 @@ export default function Cart() {
 
 
   if (cart.length === 0) {
-    return <p style={{ textAlign: "center" }}>Cart is empty</p>;
+    return <p style={{ textAlign: "center" }}>Cart Empty</p>;
   }
 
 
   return (
     <div className="container">
 
-      <h1>Your Cart</h1>
+      <h1>Checkout</h1>
 
 
       {/* Items */}
       {cart.map(item => (
-        <div key={item.id} className="product-card"
-          style={{ display: "flex", justifyContent: "space-between" }}>
+        <div
+          key={item.id}
+          className="product-card"
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
 
           <div>
             <h3>{item.name}</h3>
             <p>₹{item.price}/day</p>
           </div>
 
-          <button onClick={() => removeItem(item.id)}
-            style={{
-              background: "#ff4d4f",
-              color: "#fff",
-              border: "none",
-              padding: "6px 10px",
-              borderRadius: "5px"
-            }}>
+          <button onClick={() => remove(item.id)}>
             Remove
           </button>
 
@@ -157,118 +198,137 @@ export default function Cart() {
 
       {/* Days */}
       <div style={{ margin: "20px 0" }}>
-        <label>Rent Days: </label>
+
+        <label>Days: </label>
 
         <input
           type="number"
           min="1"
           value={days}
-          onChange={(e) => setDays(Number(e.target.value))}
+          onChange={(e) => setDays(+e.target.value)}
         />
+
       </div>
 
 
       {/* Method */}
-      <div style={{ margin: "20px 0" }}>
+      <h3>Payment Method</h3>
 
-        <h3>Payment Method</h3>
+      <label>
+        <input
+          type="radio"
+          value="UPI"
+          checked={method === "UPI"}
+          onChange={(e) => setMethod(e.target.value)}
+        />
+        UPI
+      </label>
 
-        <label>
-          <input type="radio" value="UPI"
-            checked={paymentMethod === "UPI"}
-            onChange={(e) => setPaymentMethod(e.target.value)} />
-          UPI
-        </label>
+      <br />
 
-        <br />
+      <label>
+        <input
+          type="radio"
+          value="Card"
+          checked={method === "Card"}
+          onChange={(e) => setMethod(e.target.value)}
+        />
+        Card
+      </label>
 
-        <label>
-          <input type="radio" value="Card"
-            checked={paymentMethod === "Card"}
-            onChange={(e) => setPaymentMethod(e.target.value)} />
-          Card
-        </label>
+      <br />
 
-        <br />
-
-        <label>
-          <input type="radio" value="Cash"
-            checked={paymentMethod === "Cash"}
-            onChange={(e) => setPaymentMethod(e.target.value)} />
-          Pay After Return
-        </label>
-
-      </div>
+      <label>
+        <input
+          type="radio"
+          value="Razorpay"
+          checked={method === "Razorpay"}
+          onChange={(e) => setMethod(e.target.value)}
+        />
+        Razorpay
+      </label>
 
 
-      {/* UPI FORM */}
-      {paymentMethod === "UPI" && (
-        <div className="payment-box">
+      {/* Razorpay */}
+      {method === "Razorpay" && (
+        <div className="pay-box">
+
+          <p>Pay securely with Razorpay</p>
+
+          <button
+            className="pay-btn"
+            onClick={handleRazorpay}
+          >
+            Pay with Razorpay
+          </button>
+
+        </div>
+      )}
+
+
+      {/* UPI */}
+      {method === "UPI" && (
+
+        <div className="pay-box">
 
           <input
             type="text"
-            placeholder="Enter UPI ID"
-            value={upiId}
-            onChange={(e) => setUpiId(e.target.value)}
+            placeholder="example@upi"
+            value={upi}
+            onChange={(e) => setUpi(e.target.value)}
           />
 
         </div>
       )}
 
 
-      {/* CARD FORM */}
-      {paymentMethod === "Card" && (
-        <div className="payment-box">
+      {/* Card */}
+      {method === "Card" && (
+
+        <div className="pay-box">
 
           <input
             type="text"
             placeholder="Card Number"
             maxLength="16"
-            value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, ""))}
+            value={card.number}
+            onChange={(e) =>
+              setCard({ ...card, number: e.target.value })
+            }
           />
 
           <input
-            type="text"
-            placeholder="MM/YY"
-            maxLength="5"
-            value={expiry}
-            onChange={(e) => setExpiry(e.target.value)}
+            type="month"
+            value={card.expiry}
+            onChange={(e) =>
+              setCard({ ...card, expiry: e.target.value })
+            }
           />
 
           <input
             type="password"
             placeholder="CVV"
             maxLength="3"
-            value={cvv}
-            onChange={(e) => setCvv(e.target.value.replace(/\D/g, ""))}
+            value={card.cvv}
+            onChange={(e) =>
+              setCard({ ...card, cvv: e.target.value })
+            }
           />
 
         </div>
       )}
 
 
-      {/* CASH */}
-      {paymentMethod === "Cash" && (
-        <div className="payment-box">
-          Pay after returning product.
-        </div>
-      )}
-
-
       {/* Total */}
-      <h2>Total: ₹{getTotal()}</h2>
+      <h2>Total: ₹{total}</h2>
 
 
-      {/* Button */}
+      {/* Pay */}
       <button
         className="checkout-btn"
-        onClick={confirmPayment}
-        disabled={loading}
+        onClick={pay}
       >
-
-        {loading ? "Processing..." : "Confirm Payment"}
-
+        Pay Now
       </button>
 
     </div>
